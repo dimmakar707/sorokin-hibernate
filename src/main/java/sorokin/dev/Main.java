@@ -1,17 +1,33 @@
 package sorokin.dev;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
 public class Main {
     public static void main(String[] args) {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext("sorokin.dev");
 
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            System.out.println("i = " + i);
-        }
+        SessionFactory sessionFactory = context.getBean(SessionFactory.class);
+
+        Session session = sessionFactory.openSession();
+
+        Student student1 = new Student("Vasya", 22);
+        Student student2 = new Student("Pasha", 20);
+
+        session.beginTransaction();
+        session.persist(student1);
+        session.persist(student2);
+        session.getTransaction().commit();
+
+        Student studentById1 = session.get(Student.class, 1);
+        System.out.println("Student 1: " + studentById1);
+
+        Student studentById2 = session.createQuery("SELECT s FROM Student s WHERE s.id = :id", Student.class)
+                .setParameter("id", 2)
+                .getSingleResult();
+        System.out.println(studentById2);
+
+        session.close();
     }
 }
