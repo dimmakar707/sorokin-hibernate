@@ -49,7 +49,12 @@ public class StudentService {
     }
 
     public Student updateStudent(Student student) {
-
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+        student = session.merge(student);
+        session.getTransaction().commit();
+        session.close();
+        return student;
     }
 
 
