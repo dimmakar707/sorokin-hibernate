@@ -3,6 +3,7 @@ package sorokin.dev;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import sorokin.dev.service.ProfileService;
 import sorokin.dev.service.StudentService;
 
 import java.time.LocalDateTime;
@@ -15,6 +16,8 @@ public class Main {
         SessionFactory sessionFactory = context.getBean(SessionFactory.class);
 
         StudentService studentService = context.getBean(StudentService.class);
+        ProfileService profileService = context.getBean(ProfileService.class);
+
 
         Student student1 = new Student("Vasya", 22);
         Student student2 = new Student("Pasha", 20);
@@ -24,24 +27,7 @@ public class Main {
 
         Profile profile1 = new Profile("My bio", LocalDateTime.now(), student1);
 
-        Session session = sessionFactory.openSession();
-        session.beginTransaction();
-        session.persist(profile1);
-        session.getTransaction().commit();
-        session.close();
-
-        session = sessionFactory.openSession();
-
-        profile1 = session.get(Profile.class, 1);
-        student1 = session.get(Student.class, 1);
-
-        session.beginTransaction();
-//        session.remove(profile1);
-        session.remove(student1);
-        session.getTransaction().commit();
-
-        session.close();
-
+        profileService.saveProfile(profile1);
 
     }
 }
